@@ -4,7 +4,7 @@ Please see blog post at <a href="http://mageinferno.com/blog/deploy-magento-2-di
 
 ```
 app:
-  image: mageinferno/magento2-nginx:1.9.9-0
+  image: mageinferno/magento2-nginx:1.9.9-1
   ports:
     - '80:80'
   links:
@@ -12,6 +12,8 @@ app:
     - db
   volumes_from:
     - appdata
+  environment:
+    - VIRTUAL_HOST=PROJECTID-username.node.tutum.io
 
 appdata:
   image: tianon/true
@@ -19,14 +21,14 @@ appdata:
     - /src
 
 php-fpm:
-  image: mageinferno/magento2-php:7.0.0-fpm-0
+  image: mageinferno/magento2-php:7.0.1-fpm-2
   links:
     - db
   volumes_from:
     - appdata
 
 db:
-  image: mariadb:10.0
+  image: mariadb:10.0.23
   ports:
     - '3306:3306'
   volumes_from:
@@ -43,7 +45,8 @@ dbdata:
     - /var/lib/mysql
 
 setup:
-  image: mageinferno/magento2-setup:2.0.0-archivesd-0
+  image: mageinferno/magento2-php:7.0.1-fpm-2
+  command: /usr/local/bin/mage-setup
   links:
     - db
   volumes_from:
@@ -59,4 +62,7 @@ setup:
     - M2SETUP_ADMIN_EMAIL=dummy@gmail.com
     - M2SETUP_ADMIN_USER=magento2
     - M2SETUP_ADMIN_PASSWORD=magento2
+    - M2SETUP_VERSION=2.0.0
+    - M2SETUP_USE_SAMPLE_DATA=true
+    - M2SETUP_USE_ARCHIVE=true
 ```
